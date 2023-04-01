@@ -27,22 +27,27 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <EmptySpace min="61" pref="61" max="-2" attributes="0"/>
-              <Component id="latentaikhoan" min="-2" pref="108" max="-2" attributes="0"/>
-              <EmptySpace min="50" pref="50" max="-2" attributes="0"/>
-              <Component id="txttentaikhoan" min="-2" pref="162" max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" attributes="0">
-              <EmptySpace min="61" pref="61" max="-2" attributes="0"/>
-              <Component id="lamatkhau" min="-2" pref="108" max="-2" attributes="0"/>
-              <EmptySpace min="50" pref="50" max="-2" attributes="0"/>
-              <Component id="txtmatkhau" min="-2" pref="162" max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" attributes="0">
-              <EmptySpace min="81" pref="81" max="-2" attributes="0"/>
-              <Component id="btndangnhap" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="89" pref="89" max="-2" attributes="0"/>
-              <Component id="btndangky" min="-2" pref="88" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="81" pref="81" max="-2" attributes="0"/>
+                      <Component id="btndangnhap" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="89" pref="89" max="-2" attributes="0"/>
+                      <Component id="btndangky" min="-2" pref="88" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="latentaikhoan" min="-2" pref="108" max="-2" attributes="0"/>
+                          <Component id="lamatkhau" min="-2" pref="108" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="50" pref="50" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="txtmatkhau" alignment="0" min="-2" pref="162" max="-2" attributes="0"/>
+                          <Component id="txttentaikhoan" alignment="0" min="-2" pref="162" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+              </Group>
+              <EmptySpace pref="69" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -50,20 +55,21 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <EmptySpace min="52" pref="52" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="latentaikhoan" min="-2" pref="30" max="-2" attributes="0"/>
-                  <Component id="txttentaikhoan" min="-2" pref="30" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="txttentaikhoan" pref="30" max="32767" attributes="0"/>
+                  <Component id="latentaikhoan" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="30" pref="30" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="lamatkhau" min="-2" pref="31" max="-2" attributes="0"/>
-                  <Component id="txtmatkhau" min="-2" pref="31" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="txtmatkhau" pref="31" max="32767" attributes="0"/>
+                  <Component id="lamatkhau" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="56" pref="56" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="btndangnhap" min="-2" max="-2" attributes="0"/>
                   <Component id="btndangky" min="-2" max="-2" attributes="0"/>
               </Group>
+              <EmptySpace pref="78" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -106,6 +112,9 @@
     </Component>
     <Component class="javax.swing.JButton" name="btndangnhap">
       <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="12" style="1"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="&#x110;&#x103;ng nh&#x1ead;p"/>
       </Properties>
       <Events>
@@ -114,8 +123,14 @@
     </Component>
     <Component class="javax.swing.JButton" name="btndangky">
       <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="12" style="1"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="&#x110;&#x103;ng k&#xfd;"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btndangkyActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

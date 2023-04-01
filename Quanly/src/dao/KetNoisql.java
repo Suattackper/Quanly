@@ -3,7 +3,7 @@ package dao;
 import java.sql.*;
 
 public class KetNoisql {
-    public Connection getConnection(){
+    public Connection ketNoi(){
         // Khởi tạo một đối tượng Connection với giá trị null.
         Connection conn = null;
         try {
