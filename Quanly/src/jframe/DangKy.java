@@ -2,6 +2,7 @@ package jframe;
 
 import dao.KetNoisql;
 import java.sql.*;
+import javax.swing.*;
 import javax.swing.JOptionPane;
 
 public class DangKy extends javax.swing.JFrame {
@@ -13,6 +14,10 @@ public class DangKy extends javax.swing.JFrame {
         initComponents();
         //Đặt lại các đối tượng
         reset();
+        // Thay đổi logo và tiêu đề
+        ImageIcon icon = new ImageIcon(getClass().getResource("/image/logo.png"));
+        setIconImage(icon.getImage());
+        setTitle("Đăng ký");
         //Màn hình xuất hiện ở trung tâm màn hình
         setLocationRelativeTo(null);
         //Giao diện cố định
@@ -63,7 +68,7 @@ public class DangKy extends javax.swing.JFrame {
             return;
         }
         //tạo câu lệnh để kiểm tra các đối tượng trong CSDL.
-        String sql_dangky = "Select * from nguoidung where tennguoidung =? and sodienthoai=?";
+        String sql_dangky = "Select * from nguoidung where tennguoidung =? or sodienthoai=?";
         try {
             //Tạo một PreparedStatement để truy vấn CSDL với câu lệnh SQL đã được khai báo trước đó.
             PreparedStatement pst = conn.prepareStatement(sql_dangky);
@@ -72,7 +77,20 @@ public class DangKy extends javax.swing.JFrame {
             pst.setString(2, sodienthoai);
             //Thực thi truy vấn CSDL và lưu kết quả trả về vào đối tượng ResultSet rs.
             ResultSet rs = pst.executeQuery();
-            if(!rs.next()){
+            if(rs.next()){
+                String message = "";
+                if(rs.getString("tennguoidung").equals(tentaikhoan)){
+                message += "Tên tài khoản đã tồn tại.\n";
+                }
+                if(rs.getString("sodienthoai").equals(sodienthoai)){
+                    message += "Số điện thoại đã tồn tại.";
+                }
+                JOptionPane.showMessageDialog(this, message);
+                //giải phóng bộ nhớ
+                pst.close();
+                rs.close();
+            }
+            else{
                 //hiển thị một thông báo thành công
                 JOptionPane.showMessageDialog(this,"Đăng ký thành công");
                 //thêm thông tin người dùng mới vào cơ sowrw dữ liệu
@@ -81,24 +99,19 @@ public class DangKy extends javax.swing.JFrame {
                 pst1.setString(2, txtmatkhau.getText());
                 pst1.setString(3, txthovaten.getText());
                 pst1.setString(4, txtsodienthoai.getText());
+                //thực hiện cật nhật dữ liệu
                 pst1.executeUpdate();
                 //mở một cửa sổ mới (lớp manhinhchinh) 
                 new DangNhap().setVisible(true);
                 this.setVisible(false);
-            }
-            else{
-                String message = "";
-                if(rs.getString("tennguoidung").equals(tentaikhoan)){
-                message += "Tên tài khoản đã tồn tại. ";
-                }
-                if(rs.getString("sodienthoai").equals(sodienthoai)){
-                    message += "Số điện thoại đã tồn tại.";
-                }
-                JOptionPane.showMessageDialog(this, message);
+                //giải phóng bộ nhớ
+                pst1.close();
                 pst.close();
+                rs.close();
             }
         } 
         catch (Exception e) {
+            e.printStackTrace();
         }   
     }
     @SuppressWarnings("unchecked")

@@ -1,7 +1,9 @@
 package jframe;
 
 import dao.KetNoisql;
+import java.awt.Image;
 import java.sql.*;
+import javax.swing.*;
 import javax.swing.JOptionPane;
 
 public class DangNhap extends javax.swing.JFrame {
@@ -12,6 +14,10 @@ public class DangNhap extends javax.swing.JFrame {
     
     public DangNhap() {
         initComponents();
+        // Thay đổi logo và tiêu đề
+        ImageIcon icon = new ImageIcon(getClass().getResource("/image/logo.png"));
+        setIconImage(icon.getImage());
+        setTitle("Đăng nhập");
         //Màn hình xuất hiện ở trung tâm màn hình
         setLocationRelativeTo(null);
         //Giao diện cố định
@@ -51,17 +57,38 @@ public class DangNhap extends javax.swing.JFrame {
             //Thực thi truy vấn CSDL và lưu kết quả trả về vào đối tượng ResultSet rs.
             ResultSet rs = pst.executeQuery();
             if(rs.next()){
-                //hiển thị một thông báo thành công
-                JOptionPane.showMessageDialog(this,"Đăng nhập thành công");
-                //mở một cửa sổ mới (lớp manhinhchinh) 
-                new GiaoDienChinh(tentaikhoan,matkhau).setVisible(true);
-                //ẩn màn hình đăng nhập
-                this.setVisible(false);
+                if(rs.getInt("vaitro")==0){
+                    // tạo lựa chọn
+                    String[] chon = {"Admin","User"};
+                    // hiển thị lựa chọn
+                    int luachon = JOptionPane.showOptionDialog(null, "Phiên bản", "Admin đăng nhập thành công", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, chon, chon[0]);
+                    if (luachon == JOptionPane.YES_OPTION) {
+                        new GiaoDienAdmin().setVisible(true);
+                        //ẩn màn hình đăng nhập
+                        this.setVisible(false);
+                    } else if (luachon == JOptionPane.NO_OPTION) {
+                        new GiaoDienChinh().setVisible(true);
+                        //ẩn màn hình đăng nhập
+                        this.setVisible(false);
+                    } else {
+                        // Xử lý khi không chọn gì cả hoặc đóng cửa sổ
+                    }
+                    
+                }
+                else{
+                    //hiển thị một thông báo thành công
+                    JOptionPane.showMessageDialog(this,"Đăng nhập thành công");
+                    //mở một cửa sổ mới (lớp manhinhchinh) 
+                    new GiaoDienChinh(tentaikhoan,matkhau).setVisible(true);
+                    //ẩn màn hình đăng nhập
+                    this.setVisible(false);
+                }
             }
             else{
                 JOptionPane.showMessageDialog(this, "Sai tài khoản hoặc mật khẩu");
             }
         } catch (Exception e) {
+            e.printStackTrace();  
         }   
     }
     @SuppressWarnings("unchecked")

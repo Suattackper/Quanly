@@ -1,11 +1,19 @@
 package jframe;
 
+import javax.swing.*;
+
 public class GiaoDienChinh extends javax.swing.JFrame {
 
     public GiaoDienChinh() {
         initComponents();
+        // Thay đổi logo và tiêu đề
+        ImageIcon icon = new ImageIcon(getClass().getResource("/image/logo.png"));
+        setIconImage(icon.getImage());
+        setTitle("User");
         //Màn hình xuất hiện ở trung tâm màn hình
         setLocationRelativeTo(null);
+        //Giao diện cố định
+        setResizable(false);
     }
     public GiaoDienChinh(String tentaikhoan, String matkhau) {
         initComponents();
