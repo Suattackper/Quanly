@@ -1,6 +1,7 @@
 package jframe;
 
 import dao.KetNoisql;
+import static dao.KiemTrasdt.isPhoneNumber;
 import java.sql.*;
 import javax.swing.*;
 import javax.swing.JOptionPane;
@@ -46,23 +47,29 @@ public class DangKy extends javax.swing.JFrame {
         if(tentaikhoan.equals("")){
             sb.append("Tên tài khoản không được trống\n");
         }
-        else if(sodienthoai.equals("")){
+        if(sodienthoai.equals("")){
             sb.append("Số điện thoại không được trống\n");
         }
-        else if(hovaten.equals("")){
+        if(!isPhoneNumber(txtsodienthoai.getText())){
+            sb.append("Số điện thoại không hợp lệ\n");
+        }
+        if(hovaten.equals("")){
             sb.append("Họ và tên không được trống\n");
         }
-        else if(matkhau.equals("")){
+        if(matkhau.equals("")){
             sb.append("Mật khẩu không được trống\n");
         }
-        else if(xacnhanmatkhau.equals("")){
+        if(xacnhanmatkhau.equals("")){
             sb.append("Vui lòng xác nhân mật khẩu\n");
         }
-        if(!xacnhanmatkhau.equals(matkhau)){
-            sb.append("Mật khẩu khác xác nhận mật khẩu");
-            txtmatkhau.setText("");
-            txtxacnhanmatkhau.setText("");
+        if(!xacnhanmatkhau.equals("")){
+            if(!xacnhanmatkhau.equals(matkhau)){
+                sb.append("Mật khẩu khác xác nhận mật khẩu");
+                txtmatkhau.setText("");
+                txtxacnhanmatkhau.setText("");
+            }
         }
+        
         if(sb.length()>0){
             JOptionPane.showMessageDialog(this,sb.toString());
             return;
@@ -89,11 +96,12 @@ public class DangKy extends javax.swing.JFrame {
                 //giải phóng bộ nhớ
                 pst.close();
                 rs.close();
+                conn.close();
             }
             else{
                 //hiển thị một thông báo thành công
                 JOptionPane.showMessageDialog(this,"Đăng ký thành công");
-                //thêm thông tin người dùng mới vào cơ sowrw dữ liệu
+                //thêm thông tin người dùng mới vào cơ sở dữ liệu
                 PreparedStatement pst1 = conn.prepareStatement("insert into nguoidung(tennguoidung,matkhau,hovaten,sodienthoai) values(?,?,?,?)");
                 pst1.setString(1, txttentaikhoan.getText());
                 pst1.setString(2, txtmatkhau.getText());
@@ -108,6 +116,7 @@ public class DangKy extends javax.swing.JFrame {
                 pst1.close();
                 pst.close();
                 rs.close();
+                conn.close();
             }
         } 
         catch (Exception e) {
