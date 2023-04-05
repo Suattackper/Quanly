@@ -81,7 +81,7 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
             }
         }
     }
-    public void addTable(){
+    public void addRow(){
         conn = cn.ketNoi();
 //        //Khởi tạo một đối tượng Calendar với thời gian hiên tại
 //        Calendar cal = Calendar.getInstance();
@@ -597,7 +597,7 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnthemActionPerformed
-        addTable();
+        addRow();
     }//GEN-LAST:event_btnthemActionPerformed
 
     private void btnresetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnresetActionPerformed
