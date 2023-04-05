@@ -3,11 +3,15 @@ package jframe;
 import dao.KetNoisql;
 import static dao.KiemTrasdt.isPhoneNumber;
 import java.sql.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 public class GiaoDienAdmin extends javax.swing.JFrame {
     //khởi tạo một đối tượng kết nối CSDL thông qua class ketnoisql
@@ -20,6 +24,7 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
         initComponents();
         // hiển thị dữ liệu từ CSDL lên bảng
         loadBang();
+        hienThi();
         // Thay đổi logo và tiêu đề
         ImageIcon icon = new ImageIcon(getClass().getResource("/image/logo.png"));
         setIconImage(icon.getImage());
@@ -29,11 +34,12 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
         //Giao diện cố định
         setResizable(false);
     }
-    public void Reset(){
+    public void resetUser(){
         txttentaikhoan.setText("");
         txtmatkhau.setText("");
         txtsodienthoai.setText("");
         txthovaten.setText("");
+        txtnhap.setText("");
         datengaytao.setDate(null);
     }
     public void loadBang(){
@@ -44,6 +50,39 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
         tableuser.setModel(model);
         // tải dữ liệu từ CSDL vào JTable
         updateTable();
+    }
+    public void hienThi(){
+        tableuser.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                    int selectedRow = tableuser.getSelectedRow();
+                    if (selectedRow != -1) {
+                        // Lấy giá trị từ các cột của hàng được chọn
+                        String coltentaikhoan = tableuser.getModel().getValueAt(selectedRow, 1).toString();
+                        String colmatkhau = tableuser.getModel().getValueAt(selectedRow, 2).toString();
+                        String colhovaten = tableuser.getModel().getValueAt(selectedRow, 3).toString();
+                        String colsodienthoai = tableuser.getModel().getValueAt(selectedRow, 4).toString();
+                        String colvaitro = tableuser.getModel().getValueAt(selectedRow, 5).toString();
+                        String colngaytao = tableuser.getModel().getValueAt(selectedRow, 6).toString();
+                        // Hiển thị các giá trị lên các JTextField
+                        txttentaikhoan.setText(coltentaikhoan);
+                        txtmatkhau.setText(colmatkhau);
+                        txthovaten.setText(colhovaten);
+                        txtsodienthoai.setText(colsodienthoai);
+                        cbbvaitro.setSelectedItem(colvaitro);
+                        //định dạng ngày tháng theo mẫu "dd/MM/yyyy"
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                        try {
+                            //formatter.parse(colngaytao) chuyển date thành string
+                            datengaytao.setDate(formatter.parse(colngaytao));
+                        } catch (ParseException ex) {
+                            Logger.getLogger(GiaoDienAdmin.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            }
+        });
     }
     public void updateTable(){
         conn = cn.ketNoi();
@@ -83,10 +122,11 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
     }
     public void addRow(){
         conn = cn.ketNoi();
-//        //Khởi tạo một đối tượng Calendar với thời gian hiên tại
-//        Calendar cal = Calendar.getInstance();
-        //định dạng ngày tháng theo mẫu "dd-MM-yyyy"
-        SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyy");
+        Date ngayhientai = new Date();
+        //định dạng ngày tháng theo mẫu "dd/MM/yyyy"
+        SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
+        //chuyển date sang string
+        String formattedngayhientai = dateformat.format(ngayhientai);
         //khai báo một đối tượng StringBuffer để xây dựng thông báo lỗi nếu có.
         StringBuffer sb = new StringBuffer();
         //Kiểm tra xem các đối tượng được nhập vào có trống hay không, nếu có thì sẽ được thêm vào đối tượng StringBuffer sb.
@@ -99,9 +139,9 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
         if(txtmatkhau.getText().trim().equals("")){
             sb.append("Mật khẩu không được trống\n");
         }
-//        if(!cal.getTime().equals(datengaytao.getDate())){
-//            sb.append("Ngày tạo không đúng\n");
-//        }
+        if(datengaytao.getDate()==null||!formattedngayhientai.equals(dateformat.format(datengaytao.getDate()))){
+            sb.append("Ngày tạo không đúng\n");
+        }
         if(txtsodienthoai.getText().trim().equals("")){
             sb.append("Số điện thoại không được trống\n");
         }
@@ -142,9 +182,9 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
             }
             else{
                 //hiển thị một thông báo thành công
-                JOptionPane.showMessageDialog(this,"Thêm thành công, ngày tạo được thêm tự động");
+                JOptionPane.showMessageDialog(this,"Thêm thành công");
                 //thêm thông tin người dùng mới vào cơ sở dữ liệu
-                String sql = "insert into nguoidung(tennguoidung,matkhau,hovaten,sodienthoai,vaitro) values(?,?,?,?,?)";
+                String sql = "insert into nguoidung(tennguoidung,matkhau,hovaten,sodienthoai,vaitro,ngaytao) values(?,?,?,?,?,?)";
                 // khởi tạo đối tượng PreparedStatement để thực thi câu truy vấn
                 PreparedStatement pst1 = conn.prepareStatement(sql);
                 //truyền giá trị đối tượng cần thêm vào PreparedStatement để thực hiện truy vấn CSDL.
@@ -156,6 +196,7 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
                     pst1.setInt(5,0 );
                 }
                 else pst1.setInt(5,1 );
+                pst1.setString(6, dateformat.format(datengaytao.getDate()));
                 //thực hiện cật nhật dữ liệu
                 pst1.executeUpdate();
                 //xóa hàng
@@ -170,6 +211,80 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
         } catch (Exception e) {
             JOptionPane.showConfirmDialog(null, e);
         }
+    }
+    public void deleteRow(){
+        conn = cn.ketNoi();
+        try {
+            //xóa thông tin người dùng trong cơ sở dữ liệu
+            String sql = "delete from nguoidung where tennguoidung=?";
+            int rowIndex = tableuser.getSelectedRow(); // lấy chỉ số hàng đang được chọn
+            // khởi tạo đối tượng PreparedStatement để thực thi câu truy vấn
+            PreparedStatement pst1 = conn.prepareStatement(sql);
+            //truyền giá trị đối tượng cần thêm vào PreparedStatement để thực hiện truy vấn CSDL.
+            pst1.setString(1, tableuser.getValueAt(rowIndex, 1).toString());
+            //thực hiện cật nhật dữ liệu
+            pst1.executeUpdate();
+            //xóa hàng
+            model.setRowCount(0);
+            //hiển thị dữ liệu từ CSDL lên bảng
+            loadBang();
+            //giải phóng bộ nhớ
+            pst1.close();
+            conn.close();
+        } catch (Exception e) {
+            JOptionPane.showConfirmDialog(null, e);
+        }
+    }
+    public void fixRow(){
+        conn = cn.ketNoi();
+        //tạo câu lệnh để kiểm tra các đối tượng trong CSDL.
+        String sql_kiemtra = "Select * from nguoidung where tennguoidung =? or sodienthoai=?";
+        try {
+            //Tạo một PreparedStatement để truy vấn CSDL với câu lệnh SQL đã được khai báo trước đó.
+            PreparedStatement pst = conn.prepareStatement(sql_kiemtra);
+            //truyền giá trị đối tượng cần kiểm tra vào PreparedStatement để thực hiện truy vấn CSDL.
+            pst.setString(1, txttentaikhoan.getText().trim());
+            pst.setString(2, txtsodienthoai.getText().trim());
+            //Thực thi truy vấn CSDL và lưu kết quả trả về vào đối tượng ResultSet rs.
+            ResultSet rs = pst.executeQuery();
+            if(rs.next()){
+//                if(!rs.getString("tennguoidung").equals(txttentaikhoan.getText().trim())){
+//                    JOptionPane.showMessageDialog(this, "Tên tài khoản không được đổi");
+//                }
+                //cật nhật thông tin người dùng trong cơ sở dữ liệu
+                String sql = "update nguoidung set tennguoidung=?, matkhau=?, hovaten=?,sodienthoai=?,vaitro=?,ngaytao=? where tennguoidung=?";
+                // khởi tạo đối tượng PreparedStatement để thực thi câu truy vấn
+                PreparedStatement pst1 = conn.prepareStatement(sql);
+                //truyền giá trị đối tượng cần thêm vào PreparedStatement để thực hiện truy vấn CSDL.
+                pst1.setString(1, txttentaikhoan.getText());
+                pst1.setString(2, txtmatkhau.getText());
+                pst1.setString(3, txthovaten.getText());
+                pst1.setString(4, txtsodienthoai.getText());
+                if(cbbvaitro.getSelectedItem().toString().equals("Admin")){
+                    pst1.setInt(5, 0);
+                }
+                else pst1.setInt(5, 1);
+                //định dạng ngày tháng theo mẫu "dd/MM/yyyy"
+                SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
+                pst1.setString(6, dateformat.format(datengaytao.getDate()));
+                pst1.setString(7, txttentaikhoan.getText());
+                //thực hiện cật nhật dữ liệu
+                pst1.executeUpdate();
+                JOptionPane.showMessageDialog(this, "Sửa thành công");
+                //xóa hàng
+                model.setRowCount(0);
+                //hiển thị dữ liệu từ CSDL lên bảng
+                loadBang();
+                //giải phóng bộ nhớ
+                rs.close();
+                pst.close();
+                pst1.close();
+                conn.close();
+            }
+        } 
+        catch (Exception e) {
+            JOptionPane.showConfirmDialog(null, e);
+        }  
     }
     
     @SuppressWarnings("unchecked")
@@ -314,7 +429,7 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
 
         btnthem.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btnthem.setText("Thêm");
-        btnthem.setToolTipText("Ngày tạo được thêm tự động");
+        btnthem.setToolTipText("");
         btnthem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnthemActionPerformed(evt);
@@ -323,9 +438,19 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
 
         btnsua.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btnsua.setText("Sửa");
+        btnsua.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnsuaActionPerformed(evt);
+            }
+        });
 
         btnxoa.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btnxoa.setText("Xóa");
+        btnxoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnxoaActionPerformed(evt);
+            }
+        });
 
         btntimkiem.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btntimkiem.setText("Tìm kiếm");
@@ -595,14 +720,54 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    
+    
+    private void btnresetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnresetActionPerformed
+        resetUser();
+    }//GEN-LAST:event_btnresetActionPerformed
+
+    private void btnxoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnxoaActionPerformed
+        //Tạo một đối tượng DefaultTableModel để quản lý dữ liệu của bảng được lấy từ bảng tableuser
+        DefaultTableModel model = (DefaultTableModel) tableuser.getModel();
+        //iểm tra xem có hàng nào trong bảng hay không, ko có  = -1
+        if(tableuser.getSelectedRow()==-1){
+            if(tableuser.getRowCount()==0){ //Kiểm tra xem bảng có hàng nào không
+                JOptionPane.showMessageDialog(null, "Không có gì để xóa","Dữ liệu User",JOptionPane.OK_OPTION);
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Chọn hàng để xóa","Dữ liệu User",JOptionPane.OK_OPTION);
+            }
+        }
+        else{
+            //Nếu một hàng trong bảng được chọn, nó sẽ được xóa
+            deleteRow();
+//            model.removeRow(tableuser.getSelectedRow());
+        }
+    }//GEN-LAST:event_btnxoaActionPerformed
+
+    private void btnsuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsuaActionPerformed
+        //Tạo một đối tượng DefaultTableModel để quản lý dữ liệu của bảng được lấy từ bảng tableuser
+        DefaultTableModel model = (DefaultTableModel) tableuser.getModel();
+        //iểm tra xem có hàng nào trong bảng hay không, ko có  = -1
+        if(tableuser.getSelectedRow()==-1){
+            if(tableuser.getRowCount()==0){ //Kiểm tra xem bảng có hàng nào không
+                JOptionPane.showMessageDialog(null, "Không có gì để sửa","Dữ liệu User",JOptionPane.OK_OPTION);
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Chọn hàng để sửa","Dữ liệu User",JOptionPane.OK_OPTION);
+            }
+        }
+        else{
+            //Nếu một hàng trong bảng được chọn, nó sẽ được xóa
+            fixRow();
+//            model.removeRow(tableuser.getSelectedRow());
+        }
+    }//GEN-LAST:event_btnsuaActionPerformed
 
     private void btnthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnthemActionPerformed
         addRow();
     }//GEN-LAST:event_btnthemActionPerformed
-
-    private void btnresetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnresetActionPerformed
-        Reset();
-    }//GEN-LAST:event_btnresetActionPerformed
 
     public static void main(String args[]) {
         try {

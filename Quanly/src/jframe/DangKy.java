@@ -38,7 +38,7 @@ public class DangKy extends javax.swing.JFrame {
     private void dangKy(){
         // Lấy kết nối CSDL thông qua phương thức ketNoi() của đối tượng ketnoisql.
         conn = cn.ketNoi();
-        //Lấy các giá trị được nhập vào các đối tượng.
+        //Lấy các giá trị được nhập vào các đối tượng.trim() loại bỏ khoảng trắng ở đầu và cuối chuỗi
         String tentaikhoan = txttentaikhoan.getText().toString().trim();
         String sodienthoai = txtsodienthoai.getText().toString().trim();
         String hovaten = txthovaten.getText().toString().trim();
