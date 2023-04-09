@@ -172,6 +172,12 @@ public class DangKy extends javax.swing.JFrame {
         laxacnhanmatkhau.setText("Xác nhận mật khẩu:");
         laxacnhanmatkhau.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
+        txtxacnhanmatkhau.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtxacnhanmatkhauKeyPressed(evt);
+            }
+        });
+
         lahovaten.setBackground(new java.awt.Color(255, 255, 255));
         lahovaten.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         lahovaten.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -280,7 +286,8 @@ public class DangKy extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btndangnhap)
                             .addComponent(btndangky)))
-                    .addComponent(laxacnhanshowhide, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(laxacnhanshowhide, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
 
         pack();
@@ -314,6 +321,12 @@ public class DangKy extends javax.swing.JFrame {
             lashowhide.setIcon(new ImageIcon(getClass().getResource("/image/eye_hide.png")));
         }
     }//GEN-LAST:event_lashowhideMouseClicked
+
+    private void txtxacnhanmatkhauKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtxacnhanmatkhauKeyPressed
+        if(evt.getKeyCode()==evt.VK_ENTER){
+            dangKy();
+        }
+    }//GEN-LAST:event_txtxacnhanmatkhauKeyPressed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {

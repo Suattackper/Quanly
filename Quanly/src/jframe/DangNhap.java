@@ -1,8 +1,10 @@
 package jframe;
 
 import dao.KetNoisql;
-import java.sql.*;
-import javax.swing.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 public class DangNhap extends javax.swing.JFrame {
@@ -10,7 +12,7 @@ public class DangNhap extends javax.swing.JFrame {
     KetNoisql cn = new KetNoisql();
     //Khai báo biến kết nối CSDL
     Connection conn;
-    
+
     public DangNhap() {
         initComponents();
         // Thay đổi logo và tiêu đề
@@ -24,10 +26,7 @@ public class DangNhap extends javax.swing.JFrame {
         //Giao diện cố định
         setResizable(false);
     }
-    private void reset(){
-        txttentaikhoan.setText("");
-        txtmatkhau.setText("");
-    }
+    
     private void dangNhap(){
         // Lấy kết nối CSDL thông qua phương thức ketNoi() của đối tượng ketnoisql.
         conn = cn.ketNoi();
@@ -104,9 +103,8 @@ public class DangNhap extends javax.swing.JFrame {
         lamatkhau = new javax.swing.JLabel();
         txttentaikhoan = new javax.swing.JTextField();
         txtmatkhau = new javax.swing.JPasswordField();
-        btndangnhap = new javax.swing.JButton();
         btndangky = new javax.swing.JButton();
-        txthienthimatkhau = new javax.swing.JTextField();
+        btndangnhap = new javax.swing.JButton();
         lashowhide = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -118,24 +116,22 @@ public class DangNhap extends javax.swing.JFrame {
         latentaikhoan.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         latentaikhoan.setText("Tên tài khoản: ");
         latentaikhoan.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        getContentPane().add(latentaikhoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(61, 52, 108, 30));
+        getContentPane().add(latentaikhoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 50, 134, 30));
 
+        lamatkhau.setBackground(new java.awt.Color(255, 255, 255));
         lamatkhau.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         lamatkhau.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lamatkhau.setText("Mật khẩu:");
+        lamatkhau.setText("Mật khẩu: ");
         lamatkhau.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        getContentPane().add(lamatkhau, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 110, 108, 31));
-        getContentPane().add(txttentaikhoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(219, 52, 162, 30));
-        getContentPane().add(txtmatkhau, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 110, 162, 31));
+        getContentPane().add(lamatkhau, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 110, 134, 30));
+        getContentPane().add(txttentaikhoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 50, 165, 30));
 
-        btndangnhap.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btndangnhap.setText("Đăng nhập");
-        btndangnhap.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btndangnhapActionPerformed(evt);
+        txtmatkhau.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtmatkhauKeyPressed(evt);
             }
         });
-        getContentPane().add(btndangnhap, new org.netbeans.lib.awtextra.AbsoluteConstraints(81, 199, -1, -1));
+        getContentPane().add(txtmatkhau, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 110, 165, 30));
 
         btndangky.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btndangky.setText("Đăng ký");
@@ -144,8 +140,16 @@ public class DangNhap extends javax.swing.JFrame {
                 btndangkyActionPerformed(evt);
             }
         });
-        getContentPane().add(btndangky, new org.netbeans.lib.awtextra.AbsoluteConstraints(261, 199, 88, -1));
-        getContentPane().add(txthienthimatkhau, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 110, 162, 30));
+        getContentPane().add(btndangky, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 200, 94, 30));
+
+        btndangnhap.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btndangnhap.setText("Đăng nhập");
+        btndangnhap.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btndangnhapActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btndangnhap, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 200, -1, 30));
 
         lashowhide.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/eye_hide.png"))); // NOI18N
         lashowhide.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -153,19 +157,19 @@ public class DangNhap extends javax.swing.JFrame {
                 lashowhideMouseClicked(evt);
             }
         });
-        getContentPane().add(lashowhide, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 116, -1, 20));
+        getContentPane().add(lashowhide, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 110, 30, 30));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    //sự kiện nút đăng nhập
-    private void btndangnhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndangnhapActionPerformed
-        dangNhap();
-    }//GEN-LAST:event_btndangnhapActionPerformed
 
     private void btndangkyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndangkyActionPerformed
         new DangKy().setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btndangkyActionPerformed
+
+    private void btndangnhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndangnhapActionPerformed
+        dangNhap();
+    }//GEN-LAST:event_btndangnhapActionPerformed
     //ẩn, hiện mật khẩu
     private void lashowhideMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lashowhideMouseClicked
         if (txtmatkhau.getEchoChar() == '\u25cf') { //kiểm tra xem mật khẩu có đang được ẩn hay không
@@ -177,7 +181,13 @@ public class DangNhap extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_lashowhideMouseClicked
 
-   public static void main(String args[]) {
+    private void txtmatkhauKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtmatkhauKeyPressed
+        if(evt.getKeyCode()==evt.VK_ENTER){
+            dangNhap();
+        }
+    }//GEN-LAST:event_txtmatkhauKeyPressed
+
+    public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new DangNhap().setVisible(true);
@@ -191,7 +201,6 @@ public class DangNhap extends javax.swing.JFrame {
     private javax.swing.JLabel lamatkhau;
     private javax.swing.JLabel lashowhide;
     private javax.swing.JLabel latentaikhoan;
-    private javax.swing.JTextField txthienthimatkhau;
     private javax.swing.JPasswordField txtmatkhau;
     private javax.swing.JTextField txttentaikhoan;
     // End of variables declaration//GEN-END:variables

@@ -3,9 +3,9 @@ package dao;
 import java.sql.*;
 
 public class KetNoisql {
+    // Khởi tạo một đối tượng Connection với giá trị null.
+    protected Connection conn = null;
     public Connection ketNoi(){
-        // Khởi tạo một đối tượng Connection với giá trị null.
-        Connection conn = null;
         try {
             //Đăng ký trình điều khiển JDBC của SQL Server.
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
