@@ -44,38 +44,21 @@ public class DangKy extends javax.swing.JFrame {
         String hovaten = txthovaten.getText().toString().trim();
         String matkhau = txtmatkhau.getText().toString().trim();
         String xacnhanmatkhau = txtxacnhanmatkhau.getText().toString().trim();
-        //khai báo một đối tượng StringBuffer để xây dựng thông báo lỗi nếu có.
-        StringBuffer sb = new StringBuffer();
         //Kiểm tra xem các đối tượng được nhập vào có trống hay không, nếu có thì sẽ được thêm vào đối tượng StringBuffer sb.
-        if(tentaikhoan.equals("")){
-            sb.append("Tên tài khoản không được trống\n");
-        }
-        if(sodienthoai.equals("")){
-            sb.append("Số điện thoại không được trống\n");
+        if(tentaikhoan.equals("")||sodienthoai.equals("")||hovaten.equals("")
+                ||matkhau.equals("")||xacnhanmatkhau.equals("")){
+            JOptionPane.showMessageDialog(null,"Vui lòng nhập đầy đủ");
+            return;
         }
         if(!isPhoneNumber(txtsodienthoai.getText())){
-            sb.append("Số điện thoại không hợp lệ\n");
-        }
-        if(hovaten.equals("")){
-            sb.append("Họ và tên không được trống\n");
-        }
-        if(matkhau.equals("")){
-            sb.append("Mật khẩu không được trống\n");
-        }
-        if(xacnhanmatkhau.equals("")){
-            sb.append("Vui lòng xác nhân mật khẩu\n");
+            JOptionPane.showMessageDialog(null,"Số điện thoại không hợp lệ");
+            return;
         }
         if(!xacnhanmatkhau.equals("")){
             if(!xacnhanmatkhau.equals(matkhau)){
-                sb.append("Mật khẩu khác xác nhận mật khẩu");
-                txtmatkhau.setText("");
-                txtxacnhanmatkhau.setText("");
+                JOptionPane.showMessageDialog(null,"Mật khẩu khác xác nhận mật khẩu");
+                return;
             }
-        }
-        
-        if(sb.length()>0){
-            JOptionPane.showMessageDialog(this,sb.toString());
-            return;
         }
         //tạo câu lệnh để kiểm tra các đối tượng trong CSDL.
         String sql_dangky = "Select * from nguoidung where tennguoidung =? or sodienthoai=?";
@@ -88,14 +71,14 @@ public class DangKy extends javax.swing.JFrame {
             //Thực thi truy vấn CSDL và lưu kết quả trả về vào đối tượng ResultSet rs.
             ResultSet rs = pst.executeQuery();
             if(rs.next()){
-                String message = "";
                 if(rs.getString("tennguoidung").equals(tentaikhoan)){
-                message += "Tên tài khoản đã tồn tại.\n";
+                    JOptionPane.showMessageDialog(null, "Tên tài khoản đã tồn tại");
+                    return;
                 }
                 if(rs.getString("sodienthoai").equals(sodienthoai)){
-                    message += "Số điện thoại đã tồn tại.";
+                    JOptionPane.showMessageDialog(null, "Số điện thoại đã tồn tại");
+                    return;
                 }
-                JOptionPane.showMessageDialog(this, message);
                 //giải phóng bộ nhớ
                 pst.close();
                 rs.close();

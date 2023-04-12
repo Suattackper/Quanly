@@ -33,17 +33,9 @@ public class DangNhap extends javax.swing.JFrame {
         //Lấy giá trị tài khoản và mật khẩu được nhập vào từ hai đối tượng txtusername và txtpassword.
         String tentaikhoan = txttentaikhoan.getText().toString().trim();
         String matkhau = txtmatkhau.getText().toString().trim();
-        //khai báo một đối tượng StringBuffer để xây dựng thông báo lỗi nếu có.
-        StringBuffer sb = new StringBuffer();
         //Kiểm tra xem tài khoản và mật khẩu được nhập vào có trống hay không, nếu có thì sẽ được thêm vào đối tượng StringBuffer sb.
-        if(tentaikhoan.equals("")){
-            sb.append("Tên tài khoản không được trống\n");
-        }
-        if(matkhau.equals("")){
-            sb.append("Mật khẩu không được trống");
-        }
-        if(sb.length()>0){
-            JOptionPane.showMessageDialog(this,sb.toString());
+        if(tentaikhoan.equals("")||matkhau.equals("")){
+            JOptionPane.showMessageDialog(null,"Vui lòng nhập đầy đủ");
             return;
         }
         //tạo câu lệnh để kiểm tra tài khoản và mật khẩu trong CSDL.
