@@ -3,6 +3,7 @@ package jframe;
 import com.microsoft.sqlserver.jdbc.StringUtils;
 import dao.KetNoisql;
 import static dao.KiemTrasdt.isPhoneNumber;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -446,13 +447,35 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
         //tạo câu lệnh để kiểm tra các đối tượng trong CSDL.
         String sql_kiemtra = "Select * from nguoidung where tennguoidung =?";
         try {
+            int selectedRow = tableuser.getSelectedRow();
+            String coltennguoidung = null;
+            if (selectedRow != -1) {
+                coltennguoidung = tableuser.getValueAt(selectedRow, 1).toString(); // lấy giá trị cột tên người dùng của hàng được chọn
+            }
             //Tạo một PreparedStatement để truy vấn CSDL với câu lệnh SQL đã được khai báo trước đó.
             PreparedStatement pst = conn.prepareStatement(sql_kiemtra);
             //truyền giá trị đối tượng cần kiểm tra vào PreparedStatement để thực hiện truy vấn CSDL.
-            pst.setString(1, txttentaikhoan.getText().trim());
+            pst.setString(1, coltennguoidung);
             //Thực thi truy vấn CSDL và lưu kết quả trả về vào đối tượng ResultSet rs.
             ResultSet rs = pst.executeQuery();
             if(rs.next()){
+                String sodienthoaihientai = rs.getString("sodienthoai");
+                String sodienthoaimoi = txtsodienthoai.getText();
+                if(!sodienthoaihientai.equals(sodienthoaimoi)) {
+                    // Kiểm tra số điện thoại mới đã tồn tại chưa
+                    String sql_checkPhone = "SELECT * FROM nguoidung WHERE sodienthoai = ?";
+                    PreparedStatement pst_checkPhone = conn.prepareStatement(sql_checkPhone);
+                    pst_checkPhone.setString(1, sodienthoaimoi);
+                    ResultSet rs_checkPhone = pst_checkPhone.executeQuery();
+                    if(rs_checkPhone.next()) {
+                        JOptionPane.showMessageDialog(null, "Số điện thoại đã tồn tại");
+                        return;
+                    }
+                }
+                if(!txttentaikhoan.getText().equals(coltennguoidung)){
+                    JOptionPane.showMessageDialog(null, "Không được sửa tên tài khoản");
+                    return;
+                }
                 if(!isPhoneNumber(txtsodienthoai.getText())){
                     JOptionPane.showMessageDialog(null, "Số điện thoại không hợp lệ");
                     return;
@@ -695,6 +718,10 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel3 = new javax.swing.JPanel();
+        laexit = new javax.swing.JLabel();
+        lamini = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         nguoidung = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -751,54 +778,126 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
         btnresetsp = new javax.swing.JButton();
         latimkiemmasanpham = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(915, 600));
+        setUndecorated(true);
+        setPreferredSize(new java.awt.Dimension(915, 605));
 
+        jPanel3.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel3.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 0, 1, new java.awt.Color(153, 153, 153)));
+
+        laexit.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        laexit.setForeground(new java.awt.Color(255, 51, 51));
+        laexit.setText("X");
+        laexit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                laexitMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                laexitMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                laexitMouseExited(evt);
+            }
+        });
+
+        lamini.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        lamini.setForeground(new java.awt.Color(255, 51, 51));
+        lamini.setText("-");
+        lamini.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                laminiMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                laminiMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                laminiMouseExited(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(204, 0, 0));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Giao diện Admin");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(5, 5, 5)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lamini)
+                .addGap(16, 16, 16)
+                .addComponent(laexit)
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lamini, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(laexit, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
+        );
+
+        jTabbedPane1.setBackground(new java.awt.Color(204, 204, 204));
+        jTabbedPane1.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 1, 1, 1, new java.awt.Color(153, 153, 153)));
         jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.LEFT);
+        jTabbedPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jTabbedPane1.setInheritsPopupMenu(true);
+        jTabbedPane1.setPreferredSize(new java.awt.Dimension(915, 600));
 
         nguoidung.setToolTipText("");
 
+        jPanel1.setBackground(new java.awt.Color(153, 255, 204));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         latentaikhoan.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         latentaikhoan.setText("Tên tài khoản:");
         latentaikhoan.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jPanel1.add(latentaikhoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 52, -1, 31));
-        jPanel1.add(txttentaikhoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(121, 53, 143, 31));
-        jPanel1.add(txtmatkhau, new org.netbeans.lib.awtextra.AbsoluteConstraints(121, 130, 143, 31));
+        jPanel1.add(latentaikhoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, -1, 31));
+        jPanel1.add(txttentaikhoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 30, 143, 31));
+        jPanel1.add(txtmatkhau, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 100, 143, 31));
 
         lasodienthoai.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lasodienthoai.setText("Số điện thoại:");
         lasodienthoai.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jPanel1.add(lasodienthoai, new org.netbeans.lib.awtextra.AbsoluteConstraints(276, 129, -1, 31));
+        jPanel1.add(lasodienthoai, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 100, -1, 31));
 
         lamatkhau.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lamatkhau.setText("Mật khẩu:");
         lamatkhau.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jPanel1.add(lamatkhau, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 129, 77, 31));
-        jPanel1.add(txthovaten, new org.netbeans.lib.awtextra.AbsoluteConstraints(376, 53, 127, 31));
-        jPanel1.add(txtsodienthoai, new org.netbeans.lib.awtextra.AbsoluteConstraints(376, 130, 127, 31));
+        jPanel1.add(lamatkhau, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 77, 31));
+        jPanel1.add(txthovaten, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 30, 127, 31));
+        jPanel1.add(txtsodienthoai, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 100, 127, 31));
 
         langaytao.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         langaytao.setText("Ngày tạo:");
         langaytao.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jPanel1.add(langaytao, new org.netbeans.lib.awtextra.AbsoluteConstraints(515, 129, 77, 31));
+        jPanel1.add(langaytao, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 100, 77, 31));
 
         lavaitro.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lavaitro.setText("Vai trò:");
         lavaitro.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jPanel1.add(lavaitro, new org.netbeans.lib.awtextra.AbsoluteConstraints(515, 52, 77, 31));
-        jPanel1.add(datengaytao, new org.netbeans.lib.awtextra.AbsoluteConstraints(598, 129, 129, 32));
+        jPanel1.add(lavaitro, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 30, 77, 31));
+
+        datengaytao.setBackground(new java.awt.Color(153, 255, 204));
+        jPanel1.add(datengaytao, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 100, 129, 32));
 
         lahovaten.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lahovaten.setText("Họ và tên:");
         lahovaten.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jPanel1.add(lahovaten, new org.netbeans.lib.awtextra.AbsoluteConstraints(276, 52, 94, 31));
+        jPanel1.add(lahovaten, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 30, 94, 31));
         jPanel1.add(jTextField17, new org.netbeans.lib.awtextra.AbsoluteConstraints(-64, -22, -1, -1));
 
         cbbvaitro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "User", "Admin" }));
-        jPanel1.add(cbbvaitro, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 52, -1, 30));
+        jPanel1.add(cbbvaitro, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 30, -1, 30));
+
+        jPanel6.setBackground(new java.awt.Color(153, 255, 204));
+
+        jScrollPane4.setViewportView(null);
 
         tableuser.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -822,18 +921,18 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 750, Short.MAX_VALUE)
-            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 750, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jScrollPane4)
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 470, Short.MAX_VALUE)
-            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
         );
 
+        jPanel13.setBackground(new java.awt.Color(153, 255, 204));
+
+        btnthem.setBackground(new java.awt.Color(204, 204, 204));
         btnthem.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btnthem.setForeground(new java.awt.Color(102, 102, 102));
         btnthem.setText("Thêm");
         btnthem.setToolTipText("");
         btnthem.addActionListener(new java.awt.event.ActionListener() {
@@ -842,7 +941,9 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
             }
         });
 
+        btnsua.setBackground(new java.awt.Color(204, 204, 204));
         btnsua.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btnsua.setForeground(new java.awt.Color(102, 102, 102));
         btnsua.setText("Sửa");
         btnsua.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -850,7 +951,9 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
             }
         });
 
+        btnxoa.setBackground(new java.awt.Color(204, 204, 204));
         btnxoa.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btnxoa.setForeground(new java.awt.Color(102, 102, 102));
         btnxoa.setText("Xóa");
         btnxoa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -858,7 +961,9 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
             }
         });
 
+        btntimkiem.setBackground(new java.awt.Color(204, 204, 204));
         btntimkiem.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btntimkiem.setForeground(new java.awt.Color(102, 102, 102));
         btntimkiem.setText("Tìm kiếm");
         btntimkiem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -872,7 +977,9 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
             }
         });
 
+        btnreset.setBackground(new java.awt.Color(204, 204, 204));
         btnreset.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btnreset.setForeground(new java.awt.Color(102, 102, 102));
         btnreset.setText("Reset");
         btnreset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -880,6 +987,7 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
             }
         });
 
+        radtentaikhoan.setBackground(new java.awt.Color(153, 255, 204));
         radtentaikhoan.setText("Tên tài khoản");
         radtentaikhoan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -887,6 +995,7 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
             }
         });
 
+        radsodienthoai.setBackground(new java.awt.Color(153, 255, 204));
         radsodienthoai.setText("Số điện thoại");
         radsodienthoai.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -907,7 +1016,7 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
                 .addComponent(btnxoa)
                 .addGap(18, 18, 18)
                 .addComponent(btnreset)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                 .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(radtentaikhoan, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
                     .addComponent(radsodienthoai, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -935,38 +1044,32 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
                         .addComponent(radtentaikhoan)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radsodienthoai)))
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addGap(13, 13, 13))
         );
 
         javax.swing.GroupLayout nguoidungLayout = new javax.swing.GroupLayout(nguoidung);
         nguoidung.setLayout(nguoidungLayout);
         nguoidungLayout.setHorizontalGroup(
             nguoidungLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(nguoidungLayout.createSequentialGroup()
-                .addGroup(nguoidungLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(8, 8, 8))
+            .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         nguoidungLayout.setVerticalGroup(
             nguoidungLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(nguoidungLayout.createSequentialGroup()
-                .addGroup(nguoidungLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(nguoidungLayout.createSequentialGroup()
-                        .addContainerGap(199, Short.MAX_VALUE)
-                        .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(nguoidungLayout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
-                        .addGap(60, 60, 60)))
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1, 1, 1))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Người dùng", new javax.swing.ImageIcon(getClass().getResource("/image/nhanvien.png")), nguoidung, ""); // NOI18N
 
         jPanel10.setToolTipText("");
 
+        jPanel15.setBackground(new java.awt.Color(204, 204, 255));
         jPanel15.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lamasanpham.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -990,17 +1093,19 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
         jPanel15.add(cbbloai, new org.netbeans.lib.awtextra.AbsoluteConstraints(141, 106, 131, 30));
 
         lachonanh.setToolTipText("Có thể không thêm");
-        lachonanh.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jPanel15.add(lachonanh, new org.netbeans.lib.awtextra.AbsoluteConstraints(585, 6, 150, 147));
+        lachonanh.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        jPanel15.add(lachonanh, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 10, 150, 147));
 
+        btnxoaanh.setBackground(new java.awt.Color(153, 153, 255));
         btnxoaanh.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnxoaanh.setForeground(new java.awt.Color(51, 51, 51));
         btnxoaanh.setText("Xóa ảnh");
         btnxoaanh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnxoaanhActionPerformed(evt);
             }
         });
-        jPanel15.add(btnxoaanh, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 160, 80, -1));
+        jPanel15.add(btnxoaanh, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 160, 80, -1));
 
         lagia.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lagia.setText("Giá:");
@@ -1020,14 +1125,20 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
 
         jPanel15.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(309, 56, -1, 122));
 
+        btnchonanh.setBackground(new java.awt.Color(153, 153, 255));
         btnchonanh.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnchonanh.setForeground(new java.awt.Color(51, 51, 51));
         btnchonanh.setText("Chọn ảnh");
         btnchonanh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnchonanhActionPerformed(evt);
             }
         });
-        jPanel15.add(btnchonanh, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 160, -1, -1));
+        jPanel15.add(btnchonanh, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 160, -1, -1));
+
+        jPanel16.setBackground(new java.awt.Color(204, 204, 255));
+
+        jScrollPane5.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         tableproduct.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1051,20 +1162,24 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
         jPanel16.setLayout(jPanel16Layout);
         jPanel16Layout.setHorizontalGroup(
             jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 758, Short.MAX_VALUE)
+            .addGap(0, 756, Short.MAX_VALUE)
             .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel16Layout.createSequentialGroup()
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 752, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 745, Short.MAX_VALUE))
         );
         jPanel16Layout.setVerticalGroup(
             jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 470, Short.MAX_VALUE)
+            .addGap(0, 324, Short.MAX_VALUE)
             .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE))
+                .addGroup(jPanel16Layout.createSequentialGroup()
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
 
+        jPanel17.setBackground(new java.awt.Color(204, 204, 255));
+
+        btnthemsp.setBackground(new java.awt.Color(204, 204, 204));
         btnthemsp.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btnthemsp.setForeground(new java.awt.Color(102, 102, 102));
         btnthemsp.setText("Thêm");
         btnthemsp.setToolTipText("");
         btnthemsp.addActionListener(new java.awt.event.ActionListener() {
@@ -1073,7 +1188,9 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
             }
         });
 
+        btnsuasp.setBackground(new java.awt.Color(204, 204, 204));
         btnsuasp.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btnsuasp.setForeground(new java.awt.Color(102, 102, 102));
         btnsuasp.setText("Sửa");
         btnsuasp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1081,7 +1198,9 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
             }
         });
 
+        btnxoasp.setBackground(new java.awt.Color(204, 204, 204));
         btnxoasp.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btnxoasp.setForeground(new java.awt.Color(102, 102, 102));
         btnxoasp.setText("Xóa");
         btnxoasp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1089,7 +1208,9 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
             }
         });
 
+        btntimkiemsp.setBackground(new java.awt.Color(204, 204, 204));
         btntimkiemsp.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btntimkiemsp.setForeground(new java.awt.Color(102, 102, 102));
         btntimkiemsp.setText("Tìm kiếm");
         btntimkiemsp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1097,7 +1218,9 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
             }
         });
 
+        btnresetsp.setBackground(new java.awt.Color(204, 204, 204));
         btnresetsp.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btnresetsp.setForeground(new java.awt.Color(102, 102, 102));
         btnresetsp.setText("Reset");
         btnresetsp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1122,8 +1245,8 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
                 .addComponent(btnxoasp)
                 .addGap(18, 18, 18)
                 .addComponent(btnresetsp)
-                .addGap(37, 37, 37)
-                .addComponent(latimkiemmasanpham, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(latimkiemmasanpham)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txttimkiemsanpham, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1142,26 +1265,26 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
                     .addComponent(txttimkiemsanpham, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnresetsp, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(latimkiemmasanpham, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addGap(18, 18, 18))
         );
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
         jPanel10Layout.setHorizontalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                .addComponent(jPanel15, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel17, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, 756, Short.MAX_VALUE)
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jPanel16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
 
         jTabbedPane1.addTab("   Sản phẩm", new javax.swing.ImageIcon(getClass().getResource("/image/sanpham.png")), jPanel10, ""); // NOI18N
@@ -1170,24 +1293,47 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 758, Short.MAX_VALUE)
+            .addGap(0, 756, Short.MAX_VALUE)
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 740, Short.MAX_VALUE)
+            .addGap(0, 577, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("     Danh thu", new javax.swing.ImageIcon(getClass().getResource("/image/doanhthu.png")), jPanel9, ""); // NOI18N
+
+        jPanel2.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                jPanel2ComponentShown(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 756, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 577, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("  Đăng xuất", new javax.swing.ImageIcon(getClass().getResource("/image/thoat.png")), jPanel2); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE))
         );
 
         jTabbedPane1.getAccessibleContext().setAccessibleName("");
@@ -1259,17 +1405,13 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
         addRow();
     }//GEN-LAST:event_btnthemActionPerformed
 
-    private void btnxoaanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnxoaanhActionPerformed
-        lachonanh.setIcon(null);
-    }//GEN-LAST:event_btnxoaanhActionPerformed
-
     private void btnresetspActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnresetspActionPerformed
         resetProduct();
     }//GEN-LAST:event_btnresetspActionPerformed
 
-    private void btnthemspActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnthemspActionPerformed
-        addRowsp();
-    }//GEN-LAST:event_btnthemspActionPerformed
+    private void btntimkiemspActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btntimkiemspActionPerformed
+        timKiemsp();
+    }//GEN-LAST:event_btntimkiemspActionPerformed
 
     private void btnxoaspActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnxoaspActionPerformed
         deleteRowsp();
@@ -1278,6 +1420,10 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
     private void btnsuaspActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsuaspActionPerformed
         fixRowsp();
     }//GEN-LAST:event_btnsuaspActionPerformed
+
+    private void btnthemspActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnthemspActionPerformed
+        addRowsp();
+    }//GEN-LAST:event_btnthemspActionPerformed
 
     private void btnchonanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnchonanhActionPerformed
         //tạo hộp thoại chọn file trên màn hình
@@ -1313,9 +1459,38 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnchonanhActionPerformed
 
-    private void btntimkiemspActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btntimkiemspActionPerformed
-        timKiemsp();
-    }//GEN-LAST:event_btntimkiemspActionPerformed
+    private void btnxoaanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnxoaanhActionPerformed
+        lachonanh.setIcon(null);
+    }//GEN-LAST:event_btnxoaanhActionPerformed
+
+    private void jPanel2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel2ComponentShown
+        new DangNhap().setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_jPanel2ComponentShown
+
+    private void laexitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_laexitMouseClicked
+        System.exit(0);
+    }//GEN-LAST:event_laexitMouseClicked
+
+    private void laexitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_laexitMouseEntered
+        laexit.setForeground(Color.ORANGE);
+    }//GEN-LAST:event_laexitMouseEntered
+
+    private void laexitMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_laexitMouseExited
+        laexit.setForeground(Color.red);
+    }//GEN-LAST:event_laexitMouseExited
+
+    private void laminiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_laminiMouseClicked
+        setExtendedState(ICONIFIED);
+    }//GEN-LAST:event_laminiMouseClicked
+
+    private void laminiMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_laminiMouseEntered
+        lamini.setForeground(Color.ORANGE);
+    }//GEN-LAST:event_laminiMouseEntered
+
+    private void laminiMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_laminiMouseExited
+        lamini.setForeground(Color.red);
+    }//GEN-LAST:event_laminiMouseExited
     
     
     
@@ -1360,12 +1535,15 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> cbbloai;
     private javax.swing.JComboBox<String> cbbvaitro;
     private com.toedter.calendar.JDateChooser datengaytao;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel17;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
@@ -1374,11 +1552,13 @@ public class GiaoDienAdmin extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField17;
     private javax.swing.JLabel lachonanh;
+    private javax.swing.JLabel laexit;
     private javax.swing.JLabel lagia;
     private javax.swing.JLabel lahovaten;
     private javax.swing.JLabel laloai;
     private javax.swing.JLabel lamasanpham;
     private javax.swing.JLabel lamatkhau;
+    private javax.swing.JLabel lamini;
     private javax.swing.JLabel lamota;
     private javax.swing.JLabel langaytao;
     private javax.swing.JLabel lasodienthoai;
